@@ -1,5 +1,6 @@
 const express = require('express')
 const path = require('path')
+const mongoose = require('mongoose')
 const exphbs = require('express-handlebars')
 const app = express()
 
@@ -16,7 +17,7 @@ const hbs = exphbs.create({
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
-app.use(express.static('public'))
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use('/', homeRoutes)
 app.use('/add', addRoutes)
@@ -25,6 +26,17 @@ app.use('/cart', cartRoutes)
 
 const PORT = process.env.PORT || 3000
 
-app.listen(PORT, () => {
-    console.log('Сервер запушен на порте ' + PORT)
-})
+async function start() {
+    try {
+        const url = "mongodb+srv://nirvs:Raketa123@cluster0.9lchv.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+        await mongoose.connect(url, {useNewUrlParser: true})
+        app.listen(PORT, () => {
+            console.log('Сервер запушен на порте ' + PORT)
+        })
+    } catch (e) {
+        console.log(e)
+    }
+}
+ start()
+
+
